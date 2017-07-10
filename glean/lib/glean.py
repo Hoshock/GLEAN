@@ -141,11 +141,11 @@ class Glean(object):
         prefix_i = self.glafic_i.params['prefix']
         prefix_s = self.glafic_s.params['prefix']
         
-        self.all_img_name  = prefix_i + '_image_plane_all.fits'
-        self.all_src_name  = prefix_s + '_source_plane_all.fits'
-        self.all_res_name  = prefix_i + '_residue.fits'
-        self.one_imgs_name = prefix_i + '_image_plane_one.fits'
-        self.one_srcs_name = prefix_s + '_source_plane_one.fits'
+        self.all_img_name  = prefix_i + '_image_all.fits'
+        self.all_src_name  = prefix_s + '_source_all.fits'
+        self.all_res_name  = prefix_i + '_residue_{}.fits'
+        self.one_imgs_name = prefix_i + '_image_indiv_{}.fits'
+        self.one_srcs_name = prefix_s + '_source_indiv_{}.fits'
         self.reg_name      = prefix_i + '_mutliple_images.reg'
         
         if glob.glob(self.all_img_name) or glob.glob(self.all_src_name) or \
