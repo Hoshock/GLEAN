@@ -211,6 +211,7 @@ class Glean(object):
             self.all_img_p = fitsdata.FITSData2D.initbyshape(shape_i)
             self.all_src_p = fitsdata.FITSData2D.initbyshape(shape_s)
             self.all_res   = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
+            self.all_res_p = fitsdata.FITSData2D.initbyshape(shape_i)
             self.one_imgs  = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
             self.one_srcs  = fitsdata.FITSData3D.initbyshape((0, shape_s[0], shape_s[1]))
             
