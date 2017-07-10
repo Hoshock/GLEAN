@@ -146,7 +146,7 @@ class Glean(object):
         self.all_res_name  = prefix_i + '_residue_{}.fits'
         self.one_imgs_name = prefix_i + '_image_indiv_{}.fits'
         self.one_srcs_name = prefix_s + '_source_indiv_{}.fits'
-        self.reg_name      = prefix_i + '_mutliple_images.reg'
+        self.reg_name      = prefix_i + '_mutliple_images_{}.reg'
         
         if glob.glob(self.all_img_name) or glob.glob(self.all_src_name) or \
            glob.glob(self.all_res_name) or glob.glob(self.one_imgs_name.replace('{}', '*')) or \
@@ -212,6 +212,8 @@ class Glean(object):
             self.all_src_p = fitsdata.FITSData2D.initbyshape(shape_s)
             self.all_res   = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
             self.all_res_p = fitsdata.FITSData2D.initbyshape(shape_i)
+            self.one_img   = fitsdata.FITSData2D.initbyshape(shape_i)
+            self.one_src   = fitsdata.FITSData2D.initbyshape(shape_s)
             self.one_imgs  = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
             self.one_srcs  = fitsdata.FITSData3D.initbyshape((0, shape_s[0], shape_s[1]))
             
