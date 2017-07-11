@@ -123,7 +123,7 @@ class FITSData(object):
             self.append_header({'BMIN': bmin})
         if 'BPA' not in self.header:
             print 'FITS header does not have a keyword of "BPA".'
-            Bpa = float(raw_input('BPA (deg): '))
+            bpa = float(raw_input('BPA (deg): '))
             self.append_header({'BPA': bpa})
         if 'REDSHIFT' not in self.header:
             print 'FITS header does not have a keyword of "REDSHIFT".'

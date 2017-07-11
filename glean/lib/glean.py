@@ -224,6 +224,7 @@ class Glean(object):
                     sb_max, pos = self.fitscls_p.findmax(self.maskcls)
                     if sb_max == sb_max_prev and pos == pos_prev:
                         Glean.error('Iteration error.')
+                        Glean.success('Output current results')
                         break
                     if sb_max <= threshold:
                         Glean.success('Residual max reaches the threshold.')
@@ -367,8 +368,8 @@ class Glean(object):
             # This will not kill glafic, so it should be revised in future
             except KeyboardInterrupt:
                 print '\n'
-                print Glean.error('Keyboard Interrupted')
-                print Glean.success('Output current results')
+                Glean.error('Keyboard Interrupted')
+                Glean.success('Output current results')
 
                 regfile.close()
                 self.all_img.append_data(self.all_img_p)
