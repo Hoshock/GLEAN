@@ -1,9 +1,9 @@
 # coding:UTF-8
 
 import numpy as np
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')
-from mpl_toolkits.mplot3d import Axes3D
+# import matplotlib.pyplot as plt
+# plt.style.use('ggplot')
+# from mpl_toolkits.mplot3d import Axes3D
 from astropy.convolution import convolve as _convolve
 
 def gauss(x, m, s):
@@ -160,20 +160,20 @@ class Gauss2D(object):
         elif mode == 'source':
             fitscls.data = _convolve(fitscls.data, self.beam_s)
 
-    def plot2D(self, mode):
-        fig = plt.figure()
-        ax  = fig.add_subplot(111, aspect='equal')
-        if mode == 'image':
-            ax.contour(self.X_i, self.Y_i, self.beam_i)
-        elif mode == 'source':
-            ax.contour(self.X_s, self.Y_s, self.beam_s)
-        fig.show()
+    # def plot2D(self, mode):
+    #     fig = plt.figure()
+    #     ax  = fig.add_subplot(111, aspect='equal')
+    #     if mode == 'image':
+    #         ax.contour(self.X_i, self.Y_i, self.beam_i)
+    #     elif mode == 'source':
+    #         ax.contour(self.X_s, self.Y_s, self.beam_s)
+    #     fig.show()
 
-    def plot3D(self, mode):
-        fig = plt.figure()
-        ax  = Axes3D(fig)
-        if mode == 'image':
-            ax.plot_wireframe(self.X_i, self.Y_i, self.beam_i)
-        elif mode == 'source':
-            ax.plot_wireframe(self.X_s, self.Y_s, self.beam_s)
-        fig.show()
+    # def plot3D(self, mode):
+    #     fig = plt.figure()
+    #     ax  = Axes3D(fig)
+    #     if mode == 'image':
+    #         ax.plot_wireframe(self.X_i, self.Y_i, self.beam_i)
+    #     elif mode == 'source':
+    #         ax.plot_wireframe(self.X_s, self.Y_s, self.beam_s)
+    #     fig.show()
