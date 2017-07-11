@@ -93,12 +93,12 @@ class Gauss2D(object):
             self.bmaj_i  = a2 * conv
             self.bmin_i  = b2 * conv
             self.bpa_i   = theta - np.pi / 2
-            self.xsize_i = toodd(a2 * conv / self.dx_i * 2)  # 2 * FWHM
+            self.xsize_i = toodd(self.bmaj_i / self.dx_i * 2)  # 2 * FWHM
         else:
             self.bmaj_i  = b2 * conv
             self.bmin_i  = a2 * conv
             self.bpa_i   = theta
-            self.xsize_i = toodd(b2 * conv / self.dx_i * 2)  # 2 * FWHM
+            self.xsize_i = toodd(self.bmaj_i / self.dx_i * 2)  # 2 * FWHM
         self.ysize_i = self.xsize_i
 
         xmin_i, ymin_i     = -(self.xsize_i - 1) / 2, -(self.ysize_i - 1) / 2
@@ -131,15 +131,19 @@ class Gauss2D(object):
 
         self.dx_s, self.dy_s = dx_s, dy_s
         if a2 > b2:
-            self.bmaj_s  = a2 * conv
-            self.bmin_s  = b2 * conv
+            # self.bmaj_s  = a2 * conv
+            self.bmaj_s = np.sqrt(a2**2 + (self.dx_s / conv)**2) * conv
+            # self.bmin_s  = b2 * conv
+            self.bmin_s = np.sqrt(b2**2 + (self.dy_s / conv)**2) * conv
             self.bpa_s   = theta - np.pi / 2
-            self.xsize_s = toodd(a2 * conv / self.dx_s * 2)  # 2 * FWHM
+            self.xsize_s = toodd(self.bmaj_s / self.dx_s * 2)  # 2 * FWHM
         else:
-            self.bmaj_s  = b2 * conv
-            self.bmin_s  = a2 * conv
+            # self.bmaj_s  = b2 * conv
+            self.bmaj_s = np.sqrt(b2**2 + (self.dx_s / conv)**2) * conv
+            # self.bmin_s  = a2 * conv
+            self.bmin_s = np.sqrt(a2**2 + (self.dy_s / conv)**2) * conv
             self.bpa_s   = theta
-            self.xsize_s = toodd(b2 * conv / self.dx_s * 2)  # 2 * FWHM
+            self.xsize_s = toodd(self.bmaj_s / self.dx_s * 2)  # 2 * FWHM
         self.ysize_s = self.xsize_s
 
         xmin_s, ymin_s     = -(self.xsize_s - 1) / 2, -(self.ysize_s - 1) / 2
@@ -147,10 +151,14 @@ class Gauss2D(object):
         x_s, y_s           = np.linspace(xmin_s*self.dx_s, xmax_s*self.dx_s, self.xsize_s), \
                              np.linspace(ymin_s*self.dy_s, ymax_s*self.dy_s, self.ysize_s)
         self.X_s, self.Y_s = np.meshgrid(x_s, y_s)        
-        Z_s                = gauss(np.cos(-theta) * self.X_s - np.sin(-theta) * self.Y_s, 0, a2) * \
-                             gauss(np.sin(-theta) * self.X_s + np.cos(-theta) * self.Y_s, 0, b2) * \
+        Z_s                = gauss(np.cos(-theta) * self.X_s - np.sin(-theta) * self.Y_s, 0, np.sqrt(a2**2 + (self.dx_s / conv)**2)) * \
+                             gauss(np.sin(-theta) * self.X_s + np.cos(-theta) * self.Y_s, 0, np.sqrt(b2**2 + (self.dy_s / conv)**2)) * \
                              self.dx_s * self.dy_s
         self.beam_s = Z_s
+
+        # print ''
+        # print self.bmaj_s, self.bmin_s
+        # print ''
 
         return Z_s
 
