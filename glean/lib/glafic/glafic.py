@@ -5,13 +5,13 @@ from subprocess import Popen, PIPE
 from collections import OrderedDict
 from copy import deepcopy
 
-import .lensmodel
+import lensmodel
 reload(lensmodel)
-import .extendmodel
+import extendmodel
 reload(extendmodel)
-import .pointmodel
+import pointmodel
 reload(pointmodel)
-import .psfmodel
+import psfmodel
 reload(psfmodel)
 
 class GlaficError(Exception):

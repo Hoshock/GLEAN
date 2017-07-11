@@ -12,9 +12,9 @@ from .glafic import extendmodel
 reload(extendmodel)
 from .glafic import pointmodel
 reload(pointmodel)
-import .fitsdata
+import fitsdata
 reload(fitsdata)
-import .beammodel
+import beammodel
 reload(beammodel)
 
 
