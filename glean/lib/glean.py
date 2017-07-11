@@ -6,15 +6,15 @@ import numpy as np
 from collections import OrderedDict
 from copy import deepcopy
 
-from glafic import glafic as gf
+from .glafic import glafic as gf
 reload(gf)
-from glafic import extendmodel
+from .glafic import extendmodel
 reload(extendmodel)
-from glafic import pointmodel
+from .glafic import pointmodel
 reload(pointmodel)
-import fitsdata
+import .fitsdata
 reload(fitsdata)
-import beammodel
+import .beammodel
 reload(beammodel)
 
 

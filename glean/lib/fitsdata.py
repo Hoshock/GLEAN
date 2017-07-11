@@ -290,12 +290,12 @@ class FITSData2D(FITSData):
 
             testcls += maskcls
             
-            maskcls.write_fits('../out/mask_mult_{}.fits'.format(i + 1))
+            maskcls.write_fits('glean_out/mask_mult_{}.fits'.format(i + 1))
             result.append(self.findmax(maskcls))
 
             i += 1
 
-        testcls.write_fits('../out/mask_mult.fits')
+        testcls.write_fits('glean_out/mask_mult.fits')
         return result
 
 

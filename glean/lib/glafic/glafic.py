@@ -5,13 +5,13 @@ from subprocess import Popen, PIPE
 from collections import OrderedDict
 from copy import deepcopy
 
-import lensmodel
+import .lensmodel
 reload(lensmodel)
-import extendmodel
+import .extendmodel
 reload(extendmodel)
-import pointmodel
+import .pointmodel
 reload(pointmodel)
-import psfmodel
+import .psfmodel
 reload(psfmodel)
 
 class GlaficError(Exception):
@@ -32,7 +32,7 @@ class GlaficParams(object):
 
     def __init__(self):
         self.default_primary_params   = OrderedDict([('omega', 0.26), ('lambda', 0.74), ('weos', -1.0),
-                                                     ('hubble', 0.72), ('zl', 0.3), ('prefix', '../out/out'),
+                                                     ('hubble', 0.72), ('zl', 0.3), ('prefix', 'glean_out/out'),
                                                      ('xmin', -60.0), ('ymin', -60.0), ('xmax', 60.0),
                                                      ('ymax', 60.0), ('pix_ext', 0.2), ('pix_poi', 3.0),
                                                      ('maxlev', 6)])
