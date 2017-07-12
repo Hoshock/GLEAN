@@ -193,6 +193,15 @@ class FITSData2D(FITSData):
         except IndexError:
             raise FITSDataError('Findmax error.')
 
+        if sb_up < 0:
+            sb_up = 0
+        if sb_down < 0:
+            sb_down = 0
+        if sb_left < 0:
+            sb_left = 0
+        if sb_right < 0:
+            sb_right = 0
+
         ind_cog = ((ind_max[0] * sb_max + ind_up[0] * sb_up + ind_down[0] * sb_down) / (sb_max + sb_up + sb_down),
                    (ind_max[1] * sb_max + ind_right[1] * sb_right + ind_left[1] * sb_left) / (sb_max + sb_right + sb_left))
         pos_x = (ind_cog[1] + 1 - self.header['CRPIX1']) * self.header['CDELT1'] + self.header['CRVAL1']

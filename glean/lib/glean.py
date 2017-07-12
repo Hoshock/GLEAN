@@ -216,7 +216,7 @@ class Glean(object):
             self.one_src   = fitsdata.FITSData2D.initbyshape(shape_s)
             self.one_imgs  = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
             self.one_srcs  = fitsdata.FITSData3D.initbyshape((0, shape_s[0], shape_s[1]))
-            
+
             i = 0
             sb_max_prev, pos_prev = None, None
             try:
