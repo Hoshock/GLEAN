@@ -121,12 +121,12 @@ class Glean(object):
                                                    self.default_fitscls.header['CDELT2'], mode='image')
 
         # once FITS is loaded, these parameters sholud not be changed
-        self.glafic_i.params['xmin']    = (0.5 - self.default_fitscls.header['CRPIX1']) * self.default_fitscls.header['CDELT1']
+        self.glafic_i.params['xmin']    = (0.5 - self.default_fitscls.header['CRPIX1']) * self.default_fitscls.header['CDELT1'] + self.default_fitscls.header['CRVAL1']
         self.glafic_i.params['xmax']    = (self.default_fitscls.header['NAXIS1'] + 0.5
-                                           - self.default_fitscls.header['CRPIX1']) * self.default_fitscls.header['CDELT1']
-        self.glafic_i.params['ymin']    = (0.5 - self.default_fitscls.header['CRPIX2']) * self.default_fitscls.header['CDELT2']
+                                           - self.default_fitscls.header['CRPIX1']) * self.default_fitscls.header['CDELT1'] + self.default_fitscls.header['CRVAL1']
+        self.glafic_i.params['ymin']    = (0.5 - self.default_fitscls.header['CRPIX2']) * self.default_fitscls.header['CDELT2'] + self.default_fitscls.header['CRVAL2']
         self.glafic_i.params['ymax']    = (self.default_fitscls.header['NAXIS2'] + 0.5
-                                           - self.default_fitscls.header['CRPIX2']) * self.default_fitscls.header['CDELT2']
+                                           - self.default_fitscls.header['CRPIX2']) * self.default_fitscls.header['CDELT2'] + self.default_fitscls.header['CRVAL2']
         self.glafic_i.params['pix_ext'] = self.default_fitscls.header['CDELT1']
 
     @classmethod
@@ -216,7 +216,7 @@ class Glean(object):
             self.one_src   = fitsdata.FITSData2D.initbyshape(shape_s)
             self.one_imgs  = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
             self.one_srcs  = fitsdata.FITSData3D.initbyshape((0, shape_s[0], shape_s[1]))
-
+            
             i = 0
             sb_max_prev, pos_prev = None, None
             try:
