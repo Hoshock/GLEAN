@@ -44,29 +44,34 @@ def main():
         raise MainError('The number of arguments is bad.')
 
     # check the dimension of FITS
-    if fitsdata.FITSData.check_dimension(fitsname) == 2:
+    fits_dim = fitsdata.FITSData.check_dimension(fitsname)
+    if fits_dim == 2:
         fitscls2d = fitsdata.FITSData2D.initbyname(fitsname, check=True)
         fitscls   = fitscls2d.extendto3D()
-    elif fitsdata.FITSData.check_dimension(fitsname) == 3:
+    elif fits_dim == 3:
         fitscls   = fitsdata.FITSData3D.initbyname(fitsname, check=True)
     else:
         raise MainError('FITS data should be 2D or 3D.')
 
     if len(maskname) == 0:
         maskcls = None
-    elif fitsdata.FITSData.check_dimension(maskname[0]) == 2:
-        maskcls = fitsdata.FITSData2D.initbyname(maskname[0])
-        for submask in maskname:
-            maskcls *= fitsdata.FITSData2D.initbyname(submask)
-    # elif fitsdata.FITSData.check_dimension(maskname[0]) == 3:
-    #     maskcls = fitsdata.FITSData3D.initbyname(maskname[0])
-    #     for _maskname in maskname:
-    #         maskcls *= fitsdata.FITSData3D.initbyname(_maskname)
     else:
-        raise MainError('Mask data should be 2D.')
+        mask_dim = fitsdata.FITSData.check_dimension(maskname[0])
+        if mask_dim == 2:
+            maskcls = fitsdata.FITSData2D.initbyname(maskname[0])
+            for submask in maskname:
+                maskcls *= fitsdata.FITSData2D.initbyname(submask)
+        # elif fitsdata.FITSData.check_dimension(maskname[0]) == 3:
+        #     maskcls = fitsdata.FITSData3D.initbyname(maskname[0])
+        #     for _maskname in maskname:
+        #         maskcls *= fitsdata.FITSData3D.initbyname(_maskname)
+        else:
+            raise MainError('Mask data should be 2D.')
 
     if maskcls is not None:
         maskcls.write_fits(gl.Glean.OUT_DIR + 'mask.fits')
+        if fitscls.data[0].shape != maskcls.data.shape:
+            raise MainError('Image sizes of data and mask should be the same.')
 
     gf.Glafic.path = glafic_path
     glafic_i       = gf.Glafic('one_image.input')

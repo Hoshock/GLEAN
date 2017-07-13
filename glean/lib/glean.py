@@ -105,9 +105,6 @@ class Glean(object):
     RED_COLOR    = '\033[91m'
     CLEAR_COLOR  = '\033[0m'
 
-    # PRIOR_NAME    = OUT_DIR + 'prior.dat'
-    # MULT_NAME     = OUT_DIR + 'mult.dat'
-
     ERROR_CODE   = -1
 
     def __init__(self, glafic_i, glafic_s, fitscls, maskcls):
@@ -147,7 +144,8 @@ class Glean(object):
         self.one_imgs_name = prefix_i + '_image_indiv_{}.fits'
         self.one_srcs_name = prefix_s + '_source_indiv_{}.fits'
         self.reg_name      = prefix_i + '_mutliple_images_{}.reg'
-        
+
+        # need to be revised
         if glob.glob(self.all_img_name) or glob.glob(self.all_src_name) or \
            glob.glob(self.all_res_name) or glob.glob(self.one_imgs_name.replace('{}', '*')) or \
            glob.glob(self.one_srcs_name.replace('{}', '*')) or glob.glob(self.reg_name.replace('{}', '*')):

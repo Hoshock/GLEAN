@@ -41,6 +41,8 @@ class Interpreter(object):
     MDL_OPTION    = '-m'
     ERROR_CODE    = -1
 
+    OUT_DIR = 'glean_out/'
+
     def __init__(self, glafic_i, glafic_s, glean):
         self.glafic_i  = glafic_i
         self.glafic_s  = glafic_s
@@ -61,15 +63,27 @@ class Interpreter(object):
         print 'This is {0} ver. {1} created by {2}.'.format(Interpreter.NAME, Interpreter.VERSION, Interpreter.CREATOR)
         print 'If you find any bugs, please report them to {}.\n'.format(Interpreter.CONTACT)
 
+        self.logname = Interpreter.OUT_DIR + 'glean_log.dat'
+        self.logfile = open(self.logname, 'w')
+
     @classmethod
     def error(cls, err):
         print Interpreter.RED_COLOR + 'Interpreter error: ' + Interpreter.CLEAR_COLOR + err
+
+    @classmethod
+    def warning(cls, err):
+        print Interpreter.YELLOW_COLOR + 'Warning: ' + Interpreter.CLEAR_COLOR + err
+
+    def logger(self, command):
+        self.logfile.write(command + '\n')
 
     def start(self):
         try:
             i = 1
             while True:
-                command = raw_input(Interpreter.SYMBOL.format(i)).split()
+                rcommand = raw_input(Interpreter.SYMBOL.format(i))
+                self.logger(rcommand)
+                command  = rcommand.split()
                 if len(command) == 0:
                     pass
                 else:
@@ -78,6 +92,7 @@ class Interpreter(object):
                 i += 1
                 print ''
         except End:
+            self.logfile.close()
             print 'Bye!'
 
     def send_command(self, comname, params):
@@ -121,6 +136,7 @@ class Interpreter(object):
         self.glean.execute(phase=1)
 
     def gogo(self, params):
+        Interpreter.warning('Current ver. does not support this function.')
         self.glean.execute(phase=2)
 
     def get(self, params):
@@ -175,6 +191,7 @@ class Interpreter(object):
             self.glean.params[params[0]] = params[1]            
 
     def reset(self, params):
+        Interpreter.warning('This function has a known issue. It will be fixed in the future and do not use this until then.')
         option = self.extract_option(params)
         if len(params) != 1:
             Interpreter.error('The number of arguments is bad.')
@@ -194,6 +211,7 @@ class Interpreter(object):
             self.glean.params.reset(params[0])
 
     def allreset(self, params):
+        Interpreter.warning('This function has a known issue. It will be fixed in the future and do not use this until then.')
         self.glafic_i.params.reset('all')
         self.glafic_i.models.reset('all')
         self.glafic_s.params.reset('all')
@@ -211,6 +229,7 @@ class Interpreter(object):
             Interpreter.error('The number of arguments is bad.')
 
     def makemask(self, params):
+        Interpreter.warning('Current ver. does not support this function.')
         if len(params) >= 2:
             # to be implemented
             self.glean.makemask(params)
