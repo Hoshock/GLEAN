@@ -188,7 +188,7 @@ class Interpreter(object):
             self.glafic_i.params[params[0]] = params[1]
             self.glafic_s.params[params[0]] = params[1]
         else:
-            self.glean.params[params[0]] = params[1]            
+            self.glean.params[params[0]] = params[1]
 
     def reset(self, params):
         Interpreter.warning('This function has a known issue. It will be fixed in the future and do not use this until then.')

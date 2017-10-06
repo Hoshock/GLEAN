@@ -1,7 +1,8 @@
-# coding:UTF-8
+# coding: UTF-8
 
 import sys
 import numpy as np
+# import numpy.ma as ma
 from astropy.io import fits
 
 from copy import deepcopy
@@ -15,11 +16,55 @@ def gauss(x, m, s):
 
 
 class FITSDataError(Exception):
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, msg):
+        self.msg = msg
 
     def __str__(self):
-        return self.message
+        return self.msg
+
+
+# class FITSData(object):
+#     def __init__(self, fitsName, maskName=None):
+#         self.defaultData   = fits.getdata(fitsName)
+#         self.defaultHeader = fits.getheader(fitsName)
+        
+#         self.data, self.header = self.reshapeFITS(self.defaultData, self.defaultHeader)
+
+#         if maskName is None:
+#             self.maskData = ma.nomask
+#         else:
+#             self.defaultMaskData   = fits.getdata(maskName)
+#             self.defaultMaskHeader = fits.getheader(maskName)
+
+#             self.maskData = self.makeMaskData(self.data, self.header, self.defaultMaskData, self.defaultMaskHeader)
+
+#         self.maskedData = ma.array(self.data, mask=self.maskData)
+
+#     @classmethod
+#     def error(self, msg):
+#         print 'FITSData Error: {}'.format(msg)
+
+#     def reshapeFITS(self, data, header):
+#         dimension = data.ndim
+#         if dimension == 2:
+#             return np.expand_dims(data, axis=0)
+#         elif dimension == 3:
+#             naxis3 = header['NAXIS3']
+#             if naxis3 == 1:
+#                 return data[0]
+#             else:
+#                 return data
+#         elif dimension == 4:
+#             naxis3 = header['NAXIS3']
+#             if naxis3 == 1:
+#                 return data[0, 0]
+#             else:
+#                 return data[0]
+#         else:
+#             raise FITSDataError('GLEAN does not support >4D FITS.')
+
+#     def makeMaskData(self, data, header, maskData, maskHeader):
+#         dimension = maskData.ndim
 
 
 class FITSData(object):

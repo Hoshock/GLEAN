@@ -14,13 +14,13 @@
 from __future__ import division, absolute_import
 import sys
 
-from .lib import interpreter
+from lib import interpreter
 reload(interpreter)
-from .lib import glean as gl
+from lib import glean as gl
 reload(gl)
-from .lib.glafic import glafic as gf
+from lib.glafic import glafic as gf
 reload(gf)
-from .lib import fitsdata
+from lib import fitsdata
 reload(fitsdata)
 
 

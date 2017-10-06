@@ -6,11 +6,11 @@ import numpy as np
 from collections import OrderedDict
 from copy import deepcopy
 
-from .glafic import glafic as gf
+from glafic import glafic as gf
 reload(gf)
-from .glafic import extendmodel
+from glafic import extendmodel
 reload(extendmodel)
-from .glafic import pointmodel
+from glafic import pointmodel
 reload(pointmodel)
 import fitsdata
 reload(fitsdata)
@@ -44,7 +44,7 @@ class GleanParams(object):
     @classmethod
     def error(cls, err):
         print GleanParams.RED_COLOR + 'Gleanparams error: ' + GleanParams.CLEAR_COLOR + err
-        
+
     def __getitem__(self, key):
         if key == 'all':
             return OrderedDict(self.all_params)
@@ -137,12 +137,16 @@ class Glean(object):
     def execute(self, phase=1):
         prefix_i = self.glafic_i.params['prefix']
         prefix_s = self.glafic_s.params['prefix']
-        
+
         self.all_img_name  = prefix_i + '_image_all.fits'
         self.all_src_name  = prefix_s + '_source_all.fits'
         self.all_res_name  = prefix_i + '_residue_{}.fits'
         self.one_imgs_name = prefix_i + '_image_indiv_{}.fits'
         self.one_srcs_name = prefix_s + '_source_indiv_{}.fits'
+
+        # self.one_imgs_raw_name = prefix_i + '_image_raw_indiv_{}.fits'
+        # self.one_srcs_raw_name = prefix_s + '_source_raw_indiv_{}.fits'
+
         self.reg_name      = prefix_i + '_mutliple_images_{}.reg'
 
         # need to be revised
@@ -159,7 +163,7 @@ class Glean(object):
         self.fitscls = deepcopy(self.default_fitscls)
 
         zsrc = self.default_fitscls.header['REDSHIFT']
-        
+
         xmin_i    = self.glafic_i.params['xmin']
         ymin_i    = self.glafic_i.params['ymin']
         xmax_i    = self.glafic_i.params['xmax']
@@ -192,7 +196,7 @@ class Glean(object):
 
         shape_i = (int(round((ymax_i - ymin_i) / pix_ext_i)), int(round((xmax_i - xmin_i) / pix_ext_i)))
         shape_s = (int(round((ymax_s - ymin_s) / pix_ext_s)), int(round((xmax_s - xmin_s) / pix_ext_s)))
-        
+
         self.all_img  = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
         self.all_src  = fitsdata.FITSData3D.initbyshape((0, shape_s[0], shape_s[1]))
         for j, self.fitscls_p in enumerate(self.fitscls):
@@ -200,7 +204,7 @@ class Glean(object):
                 continue
             if zmax != -1 and zmax < j:
                 continue
-            
+
             regfile = open(self.reg_name.format(j + 1), 'w')
             regfile.write('# Region file format: DS9 version 4.1\n')
             regfile.write('global color=red dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n')
@@ -214,7 +218,12 @@ class Glean(object):
             self.one_src   = fitsdata.FITSData2D.initbyshape(shape_s)
             self.one_imgs  = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
             self.one_srcs  = fitsdata.FITSData3D.initbyshape((0, shape_s[0], shape_s[1]))
-            
+
+            # self.one_img_raw  = fitsdata.FITSData2D.initbyshape(shape_i)
+            # self.one_src_raw  = fitsdata.FITSData2D.initbyshape(shape_s)
+            # self.one_imgs_raw = fitsdata.FITSData3D.initbyshape((0, shape_i[0], shape_i[1]))
+            # self.one_srcs_raw = fitsdata.FITSData3D.initbyshape((0, shape_s[0], shape_s[1]))
+
             i = 0
             sb_max_prev, pos_prev = None, None
             try:
@@ -222,7 +231,7 @@ class Glean(object):
                     try:
                         sb_max, pos = self.fitscls_p.findmax(self.maskcls)
                     except fitsdata.FITSDataError as e:
-                        Glean.error(e.message)
+                        Glean.error(e.msg)
                         Glean.success('Output current results.')
                         break
 
@@ -250,7 +259,12 @@ class Glean(object):
                     print '{:<25} = {}'.format(Glean.YELLOW_COLOR + 'gamma' + Glean.CLEAR_COLOR, gamma)
                     print '{:<25} = {}'.format(Glean.YELLOW_COLOR + 'magnification' + Glean.CLEAR_COLOR, mag)
                     print '{:<25} = ({}, {})'.format(Glean.YELLOW_COLOR + 'source position' + Glean.CLEAR_COLOR, xsrc, ysrc)
-                
+
+                    # newsigma = sigma / np.sqrt(mag)
+                    # if newsigma < pix_ext_s * 2:
+                    #     newsigma = pix_ext_s * 2
+                    # print newsigma
+
                     gauss = extendmodel.Gauss(zsrc, sbsrc, xsrc, ysrc, 0, 0, sigma, 0)
                     point = pointmodel.Point(zsrc, xsrc, ysrc)
                     self.glafic_i.models['extend'] = [gauss]
@@ -261,52 +275,6 @@ class Glean(object):
                     n_img   = imginfo['n_img']
                     x       = imginfo['x']
                     y       = imginfo['y']
-
-                    ### phase-II reconstruction ###
-                    # if phase == 2:
-                    #     rx = []
-                    #     ry = []
-                    #     pa = []
-                    #     for n in xrange(n_img):
-                    #         _srcinfo = self.glafic_i.calcimage(zsrc, x[n], y[n])
-                    #         _kappa   = _srcinfo['kappa']
-                    #         _gamma   = _srcinfo['gamma']
-                    #         _phi     = _srcinfo['phi']
-                    #         _mag     = _srcinfo['mag']
-                    
-                    #         _uncertainty = beammodel.Gauss2D(uncertainty / 3600, uncertainty / 3600, 0, pix_ext_s, pix_ext_s, mode='source')
-                    #         _uncertainty.calcbeam_i(pix_ext_i, pix_ext_i, _kappa, _gamma, _phi)
-                    #         rx.append(_uncertainty.a2)
-                    #         ry.append(_uncertainty.b2)
-                    #         pa.append(_uncertainty.theta)
-
-                    #     multinfo = self.fitscls_p.findmultmax(x, y, rx, ry, pa)
-                    #     multfile = open(Glean.MULT_NAME, 'w')
-                    #     multfile.write('{} {} {} {}\n'.format(1, n_img, zsrc, 0))
-                    #     for info in multinfo:
-                    #         multfile.write('{} {} {} {} {} {} {} {}\n'.format(info[1][0], info[1][1], info[0], uncertainty / 2.35, 0, 0, 0, 0))
-                    #     multfile.close()
-                    
-                    #     priorfile = open(Glean.PRIOR_NAME, 'w')
-                    #     # priorfile.write('gauss point 1 2 {} {}\n'.format(xsrc, uncertainty / 2.35))
-                    #     # priorfile.write('gauss point 1 3 {} {}\n'.format(ysrc, uncertainty / 2.35))
-                    #     priorfile.close()
-
-                    #     self.glafic_i.optimize_p((Glean.MULT_NAME, Glean.PRIOR_NAME))
-                    #     tx, ty, chi2 = self.glafic_i.readopt_p()
-                    
-                    #     print '{:<25} = {}'.format(Glean.YELLOW_COLOR + 'chi^2' + Glean.CLEAR_COLOR, chi2)
-                    
-                    #     gauss = extendmodel.Gauss(zsrc, sbsrc, tx, ty, 0, 0, sigma, 0)
-                    #     point = pointmodel.Point(zsrc, tx, ty)
-                    #     self.glafic_i.models['extend'] = [gauss]
-                    #     self.glafic_i.models['point']  = [point]
-                    #     self.glafic_i.create_input()
-                    
-                    #     imginfo = self.glafic_i.findimg()
-                    #     n_img   = imginfo['n_img']
-                    #     x       = imginfo['x']
-                    #     y       = imginfo['y']
 
                     print '===> output modeled image plane'
                     self.glafic_i.writeimage([0, 0])
@@ -320,21 +288,27 @@ class Glean(object):
                     print '===> output modeled source plane'
                     self.glafic_s.writeimage_ori([0, 0])
 
-                    self.one_img = fitsdata.FITSData2D.initbyname(one_img_name)
+                    # self.one_img_raw = fitsdata.FITSData2D.initbyname(one_img_name)
+                    self.one_img     = fitsdata.FITSData2D.initbyname(one_img_name)
+                    # dil_factor_img = self.one_img.data.max()
+                    # print 'image dilution factor = {}'.format(dil_factor_img)
                     if flag_iconv != 0:
                         print '===> convolve modeled image plane'
                         self.beam.convolve(self.one_img, 'image')  # it may need to be revised
-                        self.conv_i = sb_max / self.one_img.data.max()
-                        self.one_img *= self.conv_i * gain
+                    self.conv_i   = sb_max / self.one_img.data.max()
+                    self.one_img *= self.conv_i * gain
 
-                    self.one_src = fitsdata.FITSData2D.initbyname(one_src_name)
+                    # self.one_src_raw = fitsdata.FITSData2D.initbyname(one_src_name)
+                    self.one_src     = fitsdata.FITSData2D.initbyname(one_src_name)
+                    # dil_factor_src = self.one_src.data.max()
+                    # print 'source dilution factor = {}'.format(dil_factor_src)
                     if phase == 1:
-                        self.beam.calcbeam_s(pix_ext_s, pix_ext_s, kappa, gamma, phi)
+                        # self.beam.calcbeam_s(pix_ext_s, pix_ext_s, kappa, gamma, phi)
                         if flag_sconv != 0:
                             print '===> convolve modeled source plane'
-                            self.beam.convolve(self.one_src, 'source')
-                            self.conv_s = self.conv_i * gain
-                            self.one_src *= self.conv_s
+                            # self.beam.convolve(self.one_src, 'source')
+                            self.conv_s   = self.conv_i # * (dil_factor_img / dil_factor_src)
+                            self.one_src *= self.conv_s * gain
 
                     self.all_img_p = self.one_img + self.all_img_p	# it may need to be revised
                     self.all_src_p = self.one_src + self.all_src_p	# it may need to be revised
@@ -343,6 +317,8 @@ class Glean(object):
                     if i % resstep == 0:
                         self.all_res.append_data(self.all_res_p)
                     if i % imgstep == 0:
+                        # self.one_imgs_raw.append_data(self.one_img_raw)
+                        # self.one_srcs_raw.append_data(self.one_src_raw)
                         self.one_imgs.append_data(self.one_img)
                         self.one_srcs.append_data(self.one_src)
 
@@ -354,7 +330,7 @@ class Glean(object):
                     if i == limit:
                         Glean.success('The number of iteration reaches the limit.')
                         break
-            
+
                 regfile.close()
                 self.all_img.append_data(self.all_img_p)
                 self.all_src.append_data(self.all_src_p)
@@ -367,6 +343,13 @@ class Glean(object):
                 self.one_srcs.append_data(self.one_src)
                 self.one_srcs.set_header(self.all_src_p.header)
                 self.one_srcs.write_fits(self.one_srcs_name.format(j+1))
+
+                # self.one_imgs_raw.append_data(self.one_img_raw)
+                # self.one_imgs_raw.set_header(self.all_img_p.header)
+                # self.one_imgs_raw.write_fits(self.one_imgs_raw_name.format(j+1))
+                # self.one_srcs_raw.append_data(self.one_src_raw)
+                # self.one_srcs_raw.set_header(self.all_src_p.header)
+                # self.one_srcs_raw.write_fits(self.one_srcs_raw_name.format(j+1))
                 print ''
 
             # This will not kill glafic, so it should be revised in future
@@ -387,8 +370,15 @@ class Glean(object):
                 self.one_srcs.append_data(self.one_src)
                 self.one_srcs.set_header(self.all_src_p.header)
                 self.one_srcs.write_fits(self.one_srcs_name.format(j+1))
+
+                # self.one_imgs_raw.append_data(self.one_img_raw)
+                # self.one_imgs_raw.set_header(self.all_img_p.header)
+                # self.one_imgs_raw.write_fits(self.one_imgs_raw_name.format(j+1))
+                # self.one_srcs_raw.append_data(self.one_src_raw)
+                # self.one_srcs_raw.set_header(self.all_src_p.header)
+                # self.one_srcs_raw.write_fits(self.one_srcs_raw_name.format(j+1))
                 print ''
-                
+
                 break
 
         self.all_img.set_header(self.all_img_p.header)

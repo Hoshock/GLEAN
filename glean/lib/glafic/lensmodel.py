@@ -99,4 +99,25 @@ class Pow(object):
         return 'lens\t{0}\t{1:.6e}\t{2:.6e}\t{3:.6e}\t{4:.6e}\t{5:.6e}\t{6:.6e}\t{7:.6e}\n'.format(self.name,
                 self.z, self.x, self.y, self.e, self.theta_e, self.r_ein, self.gamma)
 
-MODEL_LIST = {'sie': SIE, 'pert': Pert, 'clus3': Clus3, 'mpole': Mpole, 'pow': Pow}
+    
+class Powpot(object):
+    def __init__(self, z, x, y, e_p, theta_e, r_ein, gamma):
+        self.name    = 'powpot'
+        self.z       = z
+        self.x       = x
+        self.y       = y
+        self.e_p     = e_p
+        self.theta_e = theta_e
+        self.r_ein   = r_ein
+        self.gamma   = gamma
+
+        self.params  = OrderedDict([('z', self.z), ('x', self.x), ('y', self.y),
+                                    ('e_p', self.e_p), ('theta_e', self.theta_e), ('r_ein', self.r_ein), ('gamma', self.gamma)])
+        self.opt     = OrderedDict([('z', 0), ('x', 0), ('y', 0), ('e', 0),
+                                    ('theta_e', 0), ('r_ein', 0), ('gamma', 0)])
+
+    def __str__(self):
+        return 'lens\t{0}\t{1:.6e}\t{2:.6e}\t{3:.6e}\t{4:.6e}\t{5:.6e}\t{6:.6e}\t{7:.6e}\n'.format(self.name,
+                self.z, self.x, self.y, self.e_p, self.theta_e, self.r_ein, self.gamma)
+
+MODEL_LIST = {'sie': SIE, 'pert': Pert, 'clus3': Clus3, 'mpole': Mpole, 'pow': Pow, 'powpot': Powpot}
